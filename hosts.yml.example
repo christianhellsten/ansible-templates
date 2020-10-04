@@ -3,3 +3,4 @@ app:
     127.0.0.1:
       debian_version: buster
       swap_memory: 1G
+      hostname: app-server
