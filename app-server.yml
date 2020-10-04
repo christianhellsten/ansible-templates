@@ -1,0 +1,43 @@
+---
+- hosts: app
+  gather_facts: no
+  remote_user: '{{ ssh_user }}'
+  become: '{{ use_sudo }}'
+
+  tasks:
+    - name: add docker apt key
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+
+    - name: add docker official repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/debian {{ debian_version }} stable
+        state: present
+
+    - name: install prerequisites
+      notify: restart fail2ban
+      apt:
+        update_cache: yes
+        state: latest
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg-agent
+          - software-properties-common
+
+    - name: install docker
+      notify: restart docker
+      apt:
+        state: latest
+        pkg:
+          - docker-ce
+
+    - name: ensure docker is enabled
+      service: name=docker enabled=yes
+      notify: restart docker
+
+  handlers:
+    - name: restart docker
+      action: service name=docker state=restarted

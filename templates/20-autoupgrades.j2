@@ -1,0 +1,6 @@
+// Updates the package list, downloads, and installs available upgrades every
+// day. The local download archive is cleaned every week.
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::AutocleanInterval "7";
+APT::Periodic::Unattended-Upgrade "1";
